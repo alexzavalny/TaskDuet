@@ -1,5 +1,7 @@
 import type { PeriodType } from "../types/database";
 
+const locale = "ru-RU";
+
 const asDate = (value: Date | string) =>
   typeof value === "string" ? new Date(`${value}T12:00:00`) : new Date(value);
 
@@ -53,7 +55,7 @@ export const formatPeriodLabel = (anchor: string, periodType: PeriodType) => {
   const date = startOfPeriod(anchor, periodType);
 
   if (periodType === "day") {
-    return new Intl.DateTimeFormat(undefined, {
+    return new Intl.DateTimeFormat(locale, {
       weekday: "short",
       month: "short",
       day: "numeric",
@@ -64,16 +66,16 @@ export const formatPeriodLabel = (anchor: string, periodType: PeriodType) => {
     const end = new Date(date);
     end.setDate(end.getDate() + 6);
 
-    return `${new Intl.DateTimeFormat(undefined, {
+    return `${new Intl.DateTimeFormat(locale, {
       month: "short",
       day: "numeric",
-    }).format(date)} - ${new Intl.DateTimeFormat(undefined, {
+    }).format(date)} - ${new Intl.DateTimeFormat(locale, {
       month: "short",
       day: "numeric",
     }).format(end)}`;
   }
 
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(locale, {
     month: "long",
     year: "numeric",
   }).format(date);

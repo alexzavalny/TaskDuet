@@ -96,6 +96,8 @@ create or replace function public.is_member_of_pair(target_pair_id uuid)
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -185,7 +187,13 @@ create policy "profiles_select_own"
 on public.profiles
 for select
 to authenticated
-using (id = auth.uid());
+using (
+  id = auth.uid()
+  or (
+    active_pair_id is not null
+    and public.is_member_of_pair(active_pair_id)
+  )
+);
 
 drop policy if exists "profiles_insert_own" on public.profiles;
 create policy "profiles_insert_own"

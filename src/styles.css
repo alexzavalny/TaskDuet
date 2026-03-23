@@ -145,6 +145,11 @@ label {
   margin: 1rem 0;
 }
 
+.mobile-create-toggle {
+  display: none;
+  margin: 1rem 0 0;
+}
+
 .form-row {
   grid-template-columns: 2fr repeat(3, minmax(0, 1fr)) auto;
   align-items: end;
@@ -244,5 +249,15 @@ h2 {
   .period-nav {
     justify-content: flex-start;
     flex-wrap: wrap;
+  }
+
+  .mobile-create-toggle {
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .create-card.closed {
+    display: none;
   }
 }

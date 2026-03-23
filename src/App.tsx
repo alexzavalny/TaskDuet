@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { envError } from "./lib/env";
 import { supabase } from "./lib/supabase";
+import { copy, periodLabels } from "./lib/copy";
 import {
   formatDateInput,
   formatPeriodLabel,
@@ -54,6 +55,7 @@ export function App() {
   const [newTaskOwnerId, setNewTaskOwnerId] = useState("");
   const [newTaskPeriod, setNewTaskPeriod] = useState<PeriodType>("day");
   const [newTaskDate, setNewTaskDate] = useState(formatDateInput(new Date()));
+  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -235,7 +237,7 @@ export function App() {
         password,
         options: {
           data: {
-            display_name: displayName.trim() || "Anonymous",
+            display_name: displayName.trim() || copy.defaults.anonymous,
           },
         },
       });
@@ -317,6 +319,7 @@ export function App() {
 
     await loadAppState(sessionState.userId);
     setNewTaskTitle("");
+    setIsTaskFormOpen(false);
     setLoading(false);
   };
 
@@ -365,19 +368,16 @@ export function App() {
   );
 
   if (sessionState.status === "loading") {
-    return <Shell>Loading session...</Shell>;
+    return <Shell>{copy.session.loading}</Shell>;
   }
 
   if (sessionState.status === "signed-out") {
     return (
       <Shell>
         <section className="card auth-card">
-          <div className="eyebrow">TaskDuet MVP</div>
-          <h1>Shared planning for two people.</h1>
-          <p className="muted">
-            Sign in with email and password. New accounts create a profile with
-            an invite code for pairing.
-          </p>
+          <div className="eyebrow">{copy.auth.eyebrow}</div>
+          <h1>{copy.auth.title}</h1>
+          <p className="muted">{copy.auth.description}</p>
 
           {envError && <p className="error">{envError}</p>}
 
@@ -389,13 +389,13 @@ export function App() {
                 onClick={() => setAuthMode(mode)}
                 type="button"
               >
-                {mode === "sign-in" ? "Sign In" : "Create Account"}
+                {copy.auth.modes[mode]}
               </button>
             ))}
           </div>
 
           <label>
-            Email
+            {copy.auth.fields.email}
             <input
               autoComplete="email"
               onChange={(event) => setEmail(event.target.value)}
@@ -405,7 +405,7 @@ export function App() {
           </label>
 
           <label>
-            Password
+            {copy.auth.fields.password}
             <input
               autoComplete={authMode === "sign-in" ? "current-password" : "new-password"}
               onChange={(event) => setPassword(event.target.value)}
@@ -416,7 +416,7 @@ export function App() {
 
           {authMode === "sign-up" && (
             <label>
-              Display name
+              {copy.auth.fields.displayName}
               <input
                 onChange={(event) => setDisplayName(event.target.value)}
                 type="text"
@@ -426,7 +426,7 @@ export function App() {
           )}
 
           <button className="primary" disabled={loading} onClick={handleAuth} type="button">
-            {authMode === "sign-in" ? "Sign In" : "Create Account"}
+            {copy.auth.modes[authMode]}
           </button>
 
           {error && <p className="error">{error}</p>}
@@ -439,17 +439,17 @@ export function App() {
     <Shell>
       <header className="topbar">
         <div>
-          <div className="eyebrow">TaskDuet</div>
+          <div className="eyebrow">{copy.app.eyebrow}</div>
           <h1>
             {appState.profile
-              ? `${appState.profile.display_name}'s shared tasks`
-              : "Shared tasks"}
+              ? copy.app.sharedTasksWithName(appState.profile.display_name)
+              : copy.app.sharedTasksTitle}
           </h1>
         </div>
         <div className="topbar-actions">
-          <span className="status-pill">{loading ? "Syncing" : "Live"}</span>
+          <span className="status-pill">{loading ? copy.app.syncing : copy.app.live}</span>
           <button onClick={handleSignOut} type="button">
-            Sign Out
+            {copy.app.signOut}
           </button>
         </div>
       </header>
@@ -458,31 +458,29 @@ export function App() {
 
       {!appState.profile ? (
         <section className="card">
-          <p>Profile not found. Create the matching `profiles` row in Supabase.</p>
+          <p>{copy.errors.profileNotFound}</p>
         </section>
       ) : !appState.profile.active_pair_id ? (
         <section className="pair-grid">
           <article className="card">
-            <div className="eyebrow">Your code</div>
+            <div className="eyebrow">{copy.invite.yourCode}</div>
             <div className="invite-code">{appState.profile.invite_code}</div>
-            <p className="muted">
-              Share this with your partner so they can join and create the pair.
-            </p>
+            <p className="muted">{copy.invite.description}</p>
           </article>
 
           <article className="card">
-            <div className="eyebrow">Join a pair</div>
+            <div className="eyebrow">{copy.invite.joinTitle}</div>
             <label>
-              Partner invite code
+              {copy.invite.codeLabel}
               <input
                 onChange={(event) => setInviteCodeInput(event.target.value)}
-                placeholder="ABC123"
+                placeholder={copy.invite.codePlaceholder}
                 type="text"
                 value={inviteCodeInput}
               />
             </label>
             <button className="primary" onClick={handleJoinPair} type="button">
-              Join Pair
+              {copy.invite.joinButton}
             </button>
           </article>
         </section>
@@ -497,7 +495,7 @@ export function App() {
                   onClick={() => setSelectedPeriod(period)}
                   type="button"
                 >
-                  {period}
+                  {periodLabels[period]}
                 </button>
               ))}
             </div>
@@ -507,33 +505,41 @@ export function App() {
                 onClick={() => setAnchorDate(shiftPeriod(anchorDate, selectedPeriod, -1))}
                 type="button"
               >
-                Previous
+                {copy.periods.previous}
               </button>
               <strong>{formatPeriodLabel(anchorDate, selectedPeriod)}</strong>
               <button
                 onClick={() => setAnchorDate(shiftPeriod(anchorDate, selectedPeriod, 1))}
                 type="button"
               >
-                Next
+                {copy.periods.next}
               </button>
             </div>
           </section>
 
-          <section className="card create-card">
-            <div className="eyebrow">New task</div>
+          <button
+            className="primary mobile-create-toggle"
+            onClick={() => setIsTaskFormOpen((current) => !current)}
+            type="button"
+          >
+            {isTaskFormOpen ? copy.tasks.closeForm : copy.tasks.openForm}
+          </button>
+
+          <section className={`card create-card ${isTaskFormOpen ? "open" : "closed"}`}>
+            <div className="eyebrow">{copy.tasks.newTask}</div>
             <div className="form-row">
               <label>
-                Title
+                {copy.tasks.fields.title}
                 <input
                   onChange={(event) => setNewTaskTitle(event.target.value)}
-                  placeholder="Take out trash"
+                  placeholder={copy.tasks.fields.titlePlaceholder}
                   type="text"
                   value={newTaskTitle}
                 />
               </label>
 
               <label>
-                Column owner
+                {copy.tasks.fields.columnOwner}
                 <select
                   onChange={(event) => setNewTaskOwnerId(event.target.value)}
                   value={newTaskOwnerId}
@@ -547,21 +553,21 @@ export function App() {
               </label>
 
               <label>
-                Period
+                {copy.tasks.fields.period}
                 <select
                   onChange={(event) => setNewTaskPeriod(event.target.value as PeriodType)}
                   value={newTaskPeriod}
                 >
                   {periodOptions.map((period) => (
                     <option key={period} value={period}>
-                      {period}
+                      {periodLabels[period]}
                     </option>
                   ))}
                 </select>
               </label>
 
               <label>
-                Anchor date
+                {copy.tasks.fields.anchorDate}
                 <input
                   onChange={(event) => setNewTaskDate(event.target.value)}
                   type="date"
@@ -570,7 +576,7 @@ export function App() {
               </label>
 
               <button className="primary" onClick={handleCreateTask} type="button">
-                Add task
+                {copy.tasks.addButton}
               </button>
             </div>
           </section>
@@ -580,7 +586,7 @@ export function App() {
               <article className="card task-column" key={profile.id}>
                 <div className="column-header">
                   <div>
-                    <div className="eyebrow">Column</div>
+                    <div className="eyebrow">{copy.tasks.column}</div>
                     <h2>{profile.display_name}</h2>
                   </div>
                   <span className="task-count">{tasks.length}</span>
@@ -588,7 +594,7 @@ export function App() {
 
                 <div className="task-list">
                   {tasks.length === 0 ? (
-                    <p className="empty-state">No tasks visible for this period.</p>
+                    <p className="empty-state">{copy.tasks.emptyState}</p>
                   ) : (
                     tasks.map((task) => (
                       <label
