@@ -1,0 +1,248 @@
+:root {
+  font-family: "IBM Plex Sans", "Segoe UI", sans-serif;
+  color: #1f2937;
+  background:
+    radial-gradient(circle at top left, rgba(251, 191, 36, 0.28), transparent 28%),
+    radial-gradient(circle at right, rgba(20, 184, 166, 0.14), transparent 24%),
+    linear-gradient(180deg, #fffdf7 0%, #f4efe2 100%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #111827;
+  cursor: pointer;
+  padding: 0.75rem 1rem;
+}
+
+button.primary {
+  background: #0f766e;
+  color: #f8fafc;
+}
+
+input,
+select {
+  width: 100%;
+  border: 1px solid #d6d3d1;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.82);
+  padding: 0.85rem 1rem;
+}
+
+label {
+  display: grid;
+  gap: 0.45rem;
+  font-size: 0.95rem;
+}
+
+.shell {
+  min-height: 100vh;
+  position: relative;
+}
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.55) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent);
+}
+
+.content {
+  width: min(1180px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.topbar,
+.toolbar,
+.pair-grid,
+.columns,
+.form-row {
+  display: grid;
+  gap: 1rem;
+}
+
+.topbar {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.topbar-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 28px;
+  padding: 1.25rem;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 20px 60px rgba(120, 113, 108, 0.12);
+}
+
+.auth-card {
+  width: min(480px, 100%);
+  margin: 6vh auto 0;
+}
+
+.pair-grid,
+.columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.toolbar {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.segmented {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.3rem;
+  background: rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+}
+
+.segmented button.active {
+  background: #1f2937;
+  color: #f9fafb;
+}
+
+.period-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.create-card {
+  margin: 1rem 0;
+}
+
+.form-row {
+  grid-template-columns: 2fr repeat(3, minmax(0, 1fr)) auto;
+  align-items: end;
+}
+
+.task-column {
+  min-height: 320px;
+}
+
+.column-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.task-list {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.task-item {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  border: 1px solid #e7e5e4;
+  border-radius: 18px;
+  padding: 0.85rem 1rem;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.task-item.completed {
+  color: #0f766e;
+  border-color: rgba(15, 118, 110, 0.24);
+  background: rgba(204, 251, 241, 0.45);
+}
+
+.task-item input {
+  width: auto;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.72rem;
+  color: #78716c;
+}
+
+.invite-code,
+h1,
+h2 {
+  margin: 0;
+}
+
+.invite-code {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+.muted,
+.empty-state {
+  color: #57534e;
+}
+
+.status-pill,
+.task-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  background: rgba(20, 184, 166, 0.12);
+  color: #115e59;
+}
+
+.error {
+  color: #b91c1c;
+}
+
+.banner {
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 900px) {
+  .topbar,
+  .toolbar,
+  .pair-grid,
+  .columns,
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .topbar-actions,
+  .period-nav {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+}
