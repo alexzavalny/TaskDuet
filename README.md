@@ -17,6 +17,19 @@ Minimal MVP starter for the two-person shared to-do app described in the spec.
 4. Apply the SQL in [supabase/schema.sql](/Users/alex/Projects/TaskDuet/supabase/schema.sql).
 5. Run `npm run dev`.
 
+## GitHub Pages
+
+The app is configured for deployment at `https://username.github.io/TaskDuet/`.
+
+1. Push the repository to GitHub.
+2. In GitHub, open `Settings -> Pages` and set `Source` to `GitHub Actions`.
+3. In `Settings -> Secrets and variables -> Actions`, add:
+   - repository variable `VITE_SUPABASE_URL`
+   - repository secret `VITE_SUPABASE_ANON_KEY`
+4. Push to `master` or run the `Deploy to GitHub Pages` workflow manually.
+
+The workflow file is [deploy-pages.yml](/Users/alex/Projects/TaskDuet/.github/workflows/deploy-pages.yml).
+
 ## What is included
 
 - Email/password auth shell
