@@ -438,14 +438,6 @@ export function App() {
   return (
     <Shell>
       <header className="topbar">
-        <div>
-          <div className="eyebrow">{copy.app.eyebrow}</div>
-          <h1>
-            {appState.profile
-              ? copy.app.sharedTasksWithName(appState.profile.display_name)
-              : copy.app.sharedTasksTitle}
-          </h1>
-        </div>
         <div className="topbar-actions">
           <span className="status-pill">{loading ? copy.app.syncing : copy.app.live}</span>
           <button onClick={handleSignOut} type="button">
