@@ -56,6 +56,7 @@ export const copy = {
   },
   tasks: {
     newTask: "Новая задача",
+    deleteCompleted: "Удалить выполненную задачу",
     fields: {
       title: "Название",
       titlePlaceholder: "Вынести мусор",

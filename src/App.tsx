@@ -342,6 +342,28 @@ export function App() {
     setLoading(false);
   };
 
+  const deleteTask = async (task: Task) => {
+    if (!supabase || sessionState.status !== "signed-in" || !task.completed) {
+      return;
+    }
+
+    const client = supabase;
+
+    setLoading(true);
+    setError(null);
+
+    const { error: deleteError } = await client.from("tasks").delete().eq("id", task.id);
+
+    if (deleteError) {
+      setError(deleteError.message);
+      setLoading(false);
+      return;
+    }
+
+    await loadAppState(sessionState.userId);
+    setLoading(false);
+  };
+
   const handleSignOut = async () => {
     if (!supabase) {
       return;
@@ -515,17 +537,46 @@ export function App() {
                     <p className="empty-state">{copy.tasks.emptyState}</p>
                   ) : (
                     tasks.map((task) => (
-                      <label
+                      <div
                         className={`task-item ${task.completed ? "completed" : ""}`}
                         key={task.id}
                       >
-                        <input
-                          checked={task.completed}
-                          onChange={() => void toggleTask(task)}
-                          type="checkbox"
-                        />
-                        <span>{task.title}</span>
-                      </label>
+                        <label className="task-main">
+                          <input
+                            checked={task.completed}
+                            onChange={() => void toggleTask(task)}
+                            type="checkbox"
+                          />
+                          <span>{task.title}</span>
+                        </label>
+                        {task.completed ? (
+                          <button
+                            aria-label={copy.tasks.deleteCompleted}
+                            className="task-delete-button"
+                            onClick={() => void deleteTask(task)}
+                            title={copy.tasks.deleteCompleted}
+                            type="button"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              fill="none"
+                              height="14"
+                              stroke="currentColor"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="1.8"
+                              viewBox="0 0 24 24"
+                              width="14"
+                            >
+                              <path d="M3 6h18" />
+                              <path d="M8 6V4h8v2" />
+                              <path d="M19 6l-1 14H6L5 6" />
+                              <path d="M10 11v6" />
+                              <path d="M14 11v6" />
+                            </svg>
+                          </button>
+                        ) : null}
+                      </div>
                     ))
                   )}
                 </div>

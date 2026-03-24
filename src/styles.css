@@ -113,7 +113,6 @@ label {
 .pair-grid,
 .columns {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
 }
 
 .toolbar {
@@ -165,8 +164,9 @@ label {
 
 .task-item {
   display: flex;
-  gap: 0.6rem;
   align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
   border: 1px solid #e7e5e4;
   border-radius: 18px;
   padding: 0.7rem 0.85rem;
@@ -184,8 +184,43 @@ label {
   text-decoration-thickness: 1px;
 }
 
+.task-main {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: 1;
+  min-width: 0;
+}
+
+.task-main span {
+  overflow-wrap: anywhere;
+}
+
 .task-item input {
   width: auto;
+}
+
+.task-delete-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #0f766e;
+  flex: 0 0 auto;
+}
+
+.task-delete-button:hover {
+  background: rgba(15, 118, 110, 0.12);
+}
+
+.task-delete-button:focus-visible {
+  outline: 2px solid rgba(15, 118, 110, 0.35);
+  outline-offset: 2px;
 }
 
 .eyebrow {
@@ -246,7 +281,8 @@ h2 {
   justify-content: flex-end;
   align-items: flex-end;
   gap: 0.75rem;
-  margin-top: 1rem;
+  margin-top: auto;
+  padding-top: 1rem;
 }
 
 .compact-task-form {
