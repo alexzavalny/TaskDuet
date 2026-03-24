@@ -83,18 +83,8 @@ export const formatPeriodLabel = (anchor: string, periodType: PeriodType) => {
 
 export const isTaskVisibleForPeriod = (
   taskAnchor: string,
-  taskCompleted: boolean,
-  taskCompletedAt: string | null,
+  _taskCompleted: boolean,
+  _taskCompletedAt: string | null,
   selectedAnchor: string,
-  periodType: PeriodType,
-) => {
-  if (taskCompleted) {
-    if (!taskCompletedAt) {
-      return false;
-    }
-
-    return normalizePeriodAnchor(taskCompletedAt, periodType) === selectedAnchor;
-  }
-
-  return taskAnchor <= selectedAnchor;
-};
+  _periodType: PeriodType,
+) => taskAnchor <= selectedAnchor;
