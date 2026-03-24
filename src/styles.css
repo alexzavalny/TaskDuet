@@ -190,6 +190,11 @@ label {
   background: rgba(204, 251, 241, 0.45);
 }
 
+.task-item.completed span {
+  text-decoration: line-through;
+  text-decoration-thickness: 1px;
+}
+
 .task-item input {
   width: auto;
 }
