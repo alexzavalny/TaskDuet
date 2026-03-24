@@ -56,16 +56,13 @@ export const copy = {
   },
   tasks: {
     newTask: "Новая задача",
-    openForm: "Открыть форму задачи",
-    closeForm: "Скрыть форму задачи",
     fields: {
       title: "Название",
       titlePlaceholder: "Вынести мусор",
-      columnOwner: "Владелец колонки",
-      period: "Период",
-      anchorDate: "Опорная дата",
     },
     addButton: "Добавить задачу",
+    cancelButton: "Отмена",
+    openCompactForm: "Добавить задачу",
     column: "Колонка",
     emptyState: "На этот период задач нет.",
   },

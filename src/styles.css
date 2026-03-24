@@ -78,8 +78,7 @@ label {
 .topbar,
 .toolbar,
 .pair-grid,
-.columns,
-.form-row {
+.columns {
   display: grid;
   gap: 1rem;
 }
@@ -143,21 +142,9 @@ label {
   gap: 1rem;
 }
 
-.create-card {
-  margin: 1rem 0;
-}
-
-.mobile-create-toggle {
-  display: none;
-  margin: 1rem 0 0;
-}
-
-.form-row {
-  grid-template-columns: 2fr repeat(3, minmax(0, 1fr)) auto;
-  align-items: end;
-}
-
 .task-column {
+  display: flex;
+  flex-direction: column;
   min-height: 320px;
 }
 
@@ -172,6 +159,7 @@ label {
 .task-list {
   display: grid;
   gap: 0.6rem;
+  flex: 1;
 }
 
 .task-item {
@@ -252,12 +240,47 @@ h2 {
   margin-bottom: 1rem;
 }
 
+.task-column-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.compact-task-form {
+  flex: 1;
+  display: grid;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.compact-task-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+}
+
+.quick-add-button {
+  width: 3rem;
+  height: 3rem;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  font-size: 1.8rem;
+  line-height: 1;
+}
+
 @media (max-width: 900px) {
   .topbar,
   .toolbar,
   .pair-grid,
-  .columns,
-  .form-row {
+  .columns {
     grid-template-columns: 1fr;
   }
 
@@ -265,16 +288,6 @@ h2 {
   .period-nav {
     justify-content: flex-start;
     flex-wrap: wrap;
-  }
-
-  .mobile-create-toggle {
-    display: inline-flex;
-    width: 100%;
-    justify-content: center;
-  }
-
-  .create-card.closed {
-    display: none;
   }
 
   .card {
@@ -289,6 +302,23 @@ h2 {
   .task-item {
     padding: 0.6rem 0.7rem;
     font-size: 0.88rem;
+  }
+
+  .task-column-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .compact-task-actions {
+    justify-content: stretch;
+  }
+
+  .compact-task-actions button {
+    flex: 1;
+  }
+
+  .quick-add-button {
+    align-self: flex-end;
   }
 }
 

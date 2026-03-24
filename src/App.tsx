@@ -2,12 +2,7 @@ import { useEffect, useState } from "react";
 import { envError } from "./lib/env";
 import { supabase } from "./lib/supabase";
 import { copy, periodLabels } from "./lib/copy";
-import {
-  formatDateInput,
-  formatPeriodLabel,
-  normalizePeriodAnchor,
-  shiftPeriod,
-} from "./lib/date";
+import { formatPeriodLabel, normalizePeriodAnchor, shiftPeriod } from "./lib/date";
 import { groupTasksByOwner } from "./lib/tasks";
 import type {
   PairMember,
@@ -52,10 +47,7 @@ export function App() {
   const [displayName, setDisplayName] = useState("");
   const [inviteCodeInput, setInviteCodeInput] = useState("");
   const [newTaskTitle, setNewTaskTitle] = useState("");
-  const [newTaskOwnerId, setNewTaskOwnerId] = useState("");
-  const [newTaskPeriod, setNewTaskPeriod] = useState<PeriodType>("day");
-  const [newTaskDate, setNewTaskDate] = useState(formatDateInput(new Date()));
-  const [isTaskFormOpen, setIsTaskFormOpen] = useState(false);
+  const [activeQuickCreateOwnerId, setActiveQuickCreateOwnerId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -156,7 +148,6 @@ export function App() {
         memberProfiles: [],
         tasks: [],
       });
-      setNewTaskOwnerId(profile.id);
       setLoading(false);
       return;
     }
@@ -216,7 +207,6 @@ export function App() {
       memberProfiles: sortedProfiles,
       tasks,
     });
-    setNewTaskOwnerId(sortedProfiles[0]?.id ?? profile.id);
     setLoading(false);
   };
 
@@ -286,13 +276,13 @@ export function App() {
     setLoading(false);
   };
 
-  const handleCreateTask = async () => {
+  const handleCreateTask = async (ownerProfileId: string) => {
     if (
       !supabase ||
       sessionState.status !== "signed-in" ||
       !appState.profile?.active_pair_id ||
       !newTaskTitle.trim() ||
-      !newTaskOwnerId
+      !ownerProfileId
     ) {
       return;
     }
@@ -305,10 +295,10 @@ export function App() {
     const { error: taskError } = await client.from("tasks").insert({
       title: newTaskTitle.trim(),
       pair_id: appState.profile.active_pair_id,
-      owner_profile_id: newTaskOwnerId,
+      owner_profile_id: ownerProfileId,
       created_by: sessionState.userId,
-      period_type: newTaskPeriod,
-      period_anchor_date: normalizePeriodAnchor(newTaskDate, newTaskPeriod),
+      period_type: selectedPeriod,
+      period_anchor_date: normalizePeriodAnchor(anchorDate, selectedPeriod),
     });
 
     if (taskError) {
@@ -319,7 +309,7 @@ export function App() {
 
     await loadAppState(sessionState.userId);
     setNewTaskTitle("");
-    setIsTaskFormOpen(false);
+    setActiveQuickCreateOwnerId(null);
     setLoading(false);
   };
 
@@ -509,70 +499,6 @@ export function App() {
             </div>
           </section>
 
-          <button
-            className="primary mobile-create-toggle"
-            onClick={() => setIsTaskFormOpen((current) => !current)}
-            type="button"
-          >
-            {isTaskFormOpen ? copy.tasks.closeForm : copy.tasks.openForm}
-          </button>
-
-          <section className={`card create-card ${isTaskFormOpen ? "open" : "closed"}`}>
-            <div className="eyebrow">{copy.tasks.newTask}</div>
-            <div className="form-row">
-              <label>
-                {copy.tasks.fields.title}
-                <input
-                  onChange={(event) => setNewTaskTitle(event.target.value)}
-                  placeholder={copy.tasks.fields.titlePlaceholder}
-                  type="text"
-                  value={newTaskTitle}
-                />
-              </label>
-
-              <label>
-                {copy.tasks.fields.columnOwner}
-                <select
-                  onChange={(event) => setNewTaskOwnerId(event.target.value)}
-                  value={newTaskOwnerId}
-                >
-                  {appState.memberProfiles.map((profile) => (
-                    <option key={profile.id} value={profile.id}>
-                      {profile.display_name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                {copy.tasks.fields.period}
-                <select
-                  onChange={(event) => setNewTaskPeriod(event.target.value as PeriodType)}
-                  value={newTaskPeriod}
-                >
-                  {periodOptions.map((period) => (
-                    <option key={period} value={period}>
-                      {periodLabels[period]}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                {copy.tasks.fields.anchorDate}
-                <input
-                  onChange={(event) => setNewTaskDate(event.target.value)}
-                  type="date"
-                  value={newTaskDate}
-                />
-              </label>
-
-              <button className="primary" onClick={handleCreateTask} type="button">
-                {copy.tasks.addButton}
-              </button>
-            </div>
-          </section>
-
           <section className="columns">
             {groupedTasks.map(({ profile, tasks }) => (
               <article className="card task-column" key={profile.id}>
@@ -602,6 +528,56 @@ export function App() {
                       </label>
                     ))
                   )}
+                </div>
+
+                <div className="task-column-footer">
+                  {activeQuickCreateOwnerId === profile.id && (
+                    <div className="compact-task-form">
+                      <label>
+                        {copy.tasks.fields.title}
+                        <input
+                          autoFocus
+                          onChange={(event) => setNewTaskTitle(event.target.value)}
+                          placeholder={copy.tasks.fields.titlePlaceholder}
+                          type="text"
+                          value={newTaskTitle}
+                        />
+                      </label>
+                      <div className="compact-task-actions">
+                        <button
+                          className="primary"
+                          disabled={!newTaskTitle.trim() || loading}
+                          onClick={() => void handleCreateTask(profile.id)}
+                          type="button"
+                        >
+                          {copy.tasks.addButton}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setActiveQuickCreateOwnerId(null);
+                            setNewTaskTitle("");
+                          }}
+                          type="button"
+                        >
+                          {copy.tasks.cancelButton}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+
+                  <button
+                    aria-label={copy.tasks.openCompactForm}
+                    className="quick-add-button primary"
+                    onClick={() => {
+                      setNewTaskTitle("");
+                      setActiveQuickCreateOwnerId((current) =>
+                        current === profile.id ? null : profile.id,
+                      );
+                    }}
+                    type="button"
+                  >
+                    +
+                  </button>
                 </div>
               </article>
             ))}
