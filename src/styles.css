@@ -276,7 +276,7 @@ h2 {
   line-height: 1;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 720px) {
   .topbar,
   .toolbar,
   .pair-grid,
