@@ -361,7 +361,7 @@ export function App() {
   };
 
   const groupedTasks = groupTasksByOwner(
-    appState.tasks,
+    appState.tasks.filter((task) => !task.completed),
     appState.memberProfiles,
     selectedPeriod,
     anchorDate,

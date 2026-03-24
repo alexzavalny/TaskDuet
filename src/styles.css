@@ -251,6 +251,7 @@ h2 {
   .topbar,
   .toolbar,
   .pair-grid,
+  .columns,
   .form-row {
     grid-template-columns: 1fr;
   }
@@ -269,11 +270,6 @@ h2 {
 
   .create-card.closed {
     display: none;
-  }
-
-  .columns {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.65rem;
   }
 
   .card {
@@ -333,10 +329,6 @@ h2 {
 
   .period-nav strong {
     font-size: 0.82rem;
-  }
-
-  .columns {
-    gap: 0.5rem;
   }
 
   .card.task-column {
